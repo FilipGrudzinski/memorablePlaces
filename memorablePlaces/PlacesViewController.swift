@@ -8,14 +8,30 @@
 
 import UIKit
 
+var places = [Dictionary<String, String>()]
+var activePlaces = -1
+
 class PlacesViewController: UITableViewController {
 
     var activeRow = 0
     
+    @IBOutlet var table: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-     
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        if places.count == 1 && places[0].count == 0 {
+            
+            places.remove(at: 0)
+            places.append(["name": "Poznań","lat": "52.398407", "long": "16.931172"])
+            
+        }
+        activePlaces = -1
+        table.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,19 +48,24 @@ class PlacesViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 4
+        return places.count
     }
 
   
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "Cell")
-        cell.textLabel?.text = "ROW \(indexPath.row)"
+        
+        if places[indexPath.row]["name"] != nil {
+            cell.textLabel?.text = places[indexPath.row]["name"]
+        }
+        
         return cell
     }
  
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        activeRow = indexPath.row
+        
+        activePlaces = indexPath.row
         performSegue(withIdentifier: "toMapView", sender: nil)
         
     }
