@@ -7,12 +7,24 @@
 //
 
 import UIKit
+import MapKit
+import CoreData
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MKMapViewDelegate {
 
+    
+ 
+    
+    @IBOutlet weak var mapView: MKMapView!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+      
+  
+        
     }
 
     override func didReceiveMemoryWarning() {
