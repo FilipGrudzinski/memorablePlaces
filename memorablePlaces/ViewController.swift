@@ -10,8 +10,8 @@ import UIKit
 import MapKit
 import CoreData
 
-class ViewController: UIViewController, MKMapViewDelegate {
 
+class ViewController: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     
@@ -19,6 +19,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longpress(gestureRecognizer:)))
+        
+        uilpgr.minimumPressDuration = 2
+        
+        mapView.addGestureRecognizer(uilpgr)
+    
+        
         
         if activePlaces != -1 {
             
@@ -34,18 +42,20 @@ class ViewController: UIViewController, MKMapViewDelegate {
                             
                                 if let longitude = Double(long) {
                                 
-                                    //let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                                    let span = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
                                 
-                                    let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                    let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                 
-                                    let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                                    let region = MKCoordinateRegion(center: coordinates, span: span)
                                 
-                                    self.mapView.setRegion(region, animated: true)
+                                    mapView.setRegion(region, animated: true)
                                     
                                     let annotation = MKPointAnnotation()
-                                    annotation.coordinate = coordinate
-                                    annotation.title = name
+                                    
+                                    annotation.title =  name
+                                    annotation.coordinate = coordinates
                                     self.mapView.addAnnotation(annotation)
+                                    
                                 
                                 }
                             }
@@ -59,9 +69,68 @@ class ViewController: UIViewController, MKMapViewDelegate {
             }
             
         }
+    
   
-        
     }
+    
+    @objc func longpress(gestureRecognizer: UIGestureRecognizer) {
+        
+        if gestureRecognizer.state == UIGestureRecognizerState.began {
+        
+            let touchpoint = gestureRecognizer.location(in: self.mapView)
+        
+            let newCoordinate = mapView.convert(touchpoint, toCoordinateFrom: self.mapView)
+            
+            let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
+            
+            var title = ""
+            
+            CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
+                
+                if error != nil {
+                    
+                    print(error)
+                    
+                } else {
+                    
+                    if let placemark = placemarks?[0] {
+                        
+                        if placemark.thoroughfare != nil {
+                            
+                            title += placemark.thoroughfare! + " "
+                            
+                        }
+                        
+                        if placemark.subThoroughfare != nil {
+                            
+                            title += placemark.subThoroughfare!
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                if title == "" {
+                    
+                    title = ("Added \(NSDate())")
+                }
+                
+                let annotation = MKPointAnnotation()
+                
+                annotation.coordinate = newCoordinate
+                annotation.title = title
+                self.mapView.addAnnotation(annotation)
+                places.append(["name": title, "lat": String(newCoordinate.latitude), "long": String(newCoordinate.longitude)])
+                
+                
+            })
+        
+           
+        
+        }
+    }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
