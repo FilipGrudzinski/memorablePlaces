@@ -15,26 +15,26 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     @IBOutlet weak var mapView: MKMapView!
     
-    var manager = CLLocationManager()
+    var manager = CLLocationManager()  //declaration of manager to tracking user location
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longpress(gestureRecognizer:)))
+        let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.longpress(gestureRecognizer:)))  // declaration of gesture
         
-        uilpgr.minimumPressDuration = 2
+        uilpgr.minimumPressDuration = 2  //Set time to how long user should long press
         
-        mapView.addGestureRecognizer(uilpgr)
+        mapView.addGestureRecognizer(uilpgr)  //use a long press gesture on map
     
         
-        if activePlaces == -1 {
+        if activePlaces == -1 {  // Default -1 to open map with user location instead of row
             
             manager.delegate = self
             manager.desiredAccuracy = kCLLocationAccuracyBest
             manager.requestWhenInUseAuthorization()
             manager.startUpdatingLocation()
             
-        } else {
+        } else { // Do when user tap on row
             
             if places.count > activePlaces {
             
@@ -83,7 +83,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         if gestureRecognizer.state == UIGestureRecognizerState.began {
         
-            let touchpoint = gestureRecognizer.location(in: self.mapView)
+            let touchpoint = gestureRecognizer.location(in: self.mapView) 
         
             let newCoordinate = mapView.convert(touchpoint, toCoordinateFrom: self.mapView)
             
@@ -126,7 +126,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 
                 if title == "" {
                     
-                    title = ("Added \(NSDate())")
+                    title = ("Added \(NSDate())") // if title is empty set date insteed of name
 
                 }
                 
@@ -136,9 +136,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 annotation.title = title
                 annotation.subtitle = subtitle
                 self.mapView.addAnnotation(annotation)
-                places.append(["name": title, "lat": String(newCoordinate.latitude), "long": String(newCoordinate.longitude)])
+                places.append(["name": title, "lat": String(newCoordinate.latitude), "long": String(newCoordinate.longitude)]) // add long press place to places array
                 
-                UserDefaults.standard.set(places, forKey: "places")
+                UserDefaults.standard.set(places, forKey: "places")  // saves permanently place
                 
             })
         
@@ -159,7 +159,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         //Short way
         
-        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))
+        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)) // tracking user location
         
         self.mapView.setRegion(region, animated: true)
         

@@ -8,12 +8,12 @@
 
 import UIKit
 
-var places = [Dictionary<String, String>()]
+var places = [Dictionary<String, String>()]  // Create array to keep places
 var activePlaces = -1
 
 class PlacesViewController: UITableViewController {
 
-    var activeRow = 0
+    //var activeRow = 0
     
     @IBOutlet var table: UITableView!
     
@@ -64,7 +64,7 @@ class PlacesViewController: UITableViewController {
 
         let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "Cell")
         
-        if places[indexPath.row]["name"] != nil {
+        if places[indexPath.row]["name"] != nil { // Testing if places name taped from table is not nil
             cell.textLabel?.text = places[indexPath.row]["name"]
         }
         
@@ -73,7 +73,7 @@ class PlacesViewController: UITableViewController {
  
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        activePlaces = indexPath.row
+        activePlaces = indexPath.row  // set activePlaces to row to open mapView with saved row position
         performSegue(withIdentifier: "toMapView", sender: nil)
         
     }
